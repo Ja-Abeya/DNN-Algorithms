@@ -9,7 +9,7 @@ from tensorflow.keras.layers import Dense
 # Load the dataset
 df = pd.read_csv('train.csv')
 
-# Assuming the target variable is named 'target_class'
+#Assuming the target variable is named 'target_class'
 target_class = 'target_class'
 
 # Assuming you have selected relevant features for prediction
