@@ -1,0 +1,54 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+
+# Load the dataset
+df = pd.read_csv('train.csv')
+
+# Assuming the target variable is named 'target_class'
+target_class = 'target_class'
+
+# Assuming you have selected relevant features for prediction
+feature_columns = ['feature1', 'feature2', 'feature3']
+
+# Create feature matrix (X) and target vector (y)
+X = df[feature_columns]
+y = df[target_class]
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Standardize features
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+# Build the DNN model
+model = Sequential()
+model.add(Dense(128, input_dim=X_train_scaled.shape[1], activation='relu'))
+model.add(Dense(64, activation='relu'))
+model.add(Dense(1, activation='sigmoid'))
+
+# Compile the model
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+
+# Train the model
+model.fit(X_train_scaled, y_train, epochs=10, batch_size=32, validation_split=0.2)
+
+# Evaluate the model on the test set
+y_pred_dnn = model.predict_classes(X_test_scaled).flatten()
+
+# Evaluate the model
+accuracy_dnn = accuracy_score(y_test, y_pred_dnn)
+print(f'DNN Accuracy: {accuracy_dnn}')
+
+# Display classification report and confusion matrix
+print('Classification Report:')
+print(classification_report(y_test, y_pred_dnn))
+
+print('Confusion Matrix:')
+print(confusion_matrix(y_test, y_pred_dnn))
